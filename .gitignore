@@ -9,3 +9,9 @@
 
 # RStudio files
 .Rproj.user/
+
+*.pdf
+*.html
+
+*_cache*
+*_files*
