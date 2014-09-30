@@ -9,8 +9,10 @@ date: "September 17, 2014"
 ---
 ```{r setup, echo=FALSE, message=FALSE}
 require(knitr)
-#turn off mesages and warnings and make it so output isn't prefixed by anything, default is to put "##" in front of all output for some reason
-opts_chunk$set(message=FALSE, warning=FALSE, comment = "")
+#turn off mesages and warnings and make it so output isn't prefixed by anything,
+#default is to put "##" in front of all output for some reason
+#also set tidy to true so code is wrapped properly 
+opts_chunk$set(message=FALSE, warning=FALSE, comment = "", tidy = T)
 ```
 
 ************
@@ -184,7 +186,7 @@ Now let's say we wanted to sort a data frame (Session_1) according to a sorted l
 order(Session_1$Dose)
 ```  
 And we should get the following output:  
-```{r echo = FALSE}
+```{r echo = FALSE, }
 order(Session_1$Dose)
 ```    
 Notice that the output now is the row numbers that correspond to our sorted values for dose. Rows 89-99 correspond to value 3.10, just like in our `sort()` example.  
