@@ -11,7 +11,7 @@
 .Rproj.user/
 
 *.pdf
-*.html
+*/*.html
 
 *_cache*
 *_files*

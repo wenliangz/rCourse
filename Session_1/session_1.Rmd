@@ -1,9 +1,9 @@
 ---
 title: "Session 1 Exercises"
 output:
-  pdf_document:
-    toc: yes
   html_document:
+    toc: yes
+  pdf_document:
     toc: yes
 date: "September 10, 2014"
 ---
@@ -13,6 +13,7 @@ require(knitr)
 #default is to put "##" in front of all output for some reason
 #also set tidy to true so code is wrapped properly 
 opts_chunk$set(message=FALSE, warning=FALSE, comment = "", tidy = T)
+options(width = 60)
 ```
 **Session Prep:** Download the dataset we will be working with for this session: [Session_1.txt](https://www.dropbox.com/s/yhz4f8j957n68yg/Session_1.txt?dl=0)
 

@@ -1,0 +1,55 @@
+
+#ses_header {
+	color: #cc6666;
+}
+
+#ses_list {
+	color: #5fffaf;
+	font-weight: bold;
+	font-family: cursive;
+}
+
+#ses_list_ad {
+	color: #5fffaf;
+	font-weight: bold;
+	font-family: cursive;
+}
+
+#ses_list a:hover{
+	color: #ff5f87;
+}
+
+li > a {
+    color : #5fafff;
+    text-decoration: none;
+}
+ul > li > a {
+    color : #5f87ff;
+    text-decoration: none;
+}
+
+body > a {
+    color : #5fafff;
+}
+
+#course_header{
+    color: #cc6666;
+}
+
+#index_body{
+    background-color: #354449;
+}
+#index_body a {
+    color : #5fafff;
+}
+
+#ses_body{
+    background-color: #354449;
+}
+
+.download_button{
+     background-color: #aa5050;
+     /*border: 1px solid #354449;
+     border-radius: 10%;*/
+     font-family: sans;
+}
