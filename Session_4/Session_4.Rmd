@@ -1,0 +1,318 @@
+---
+title: 'Data Visualization in R: Session 4'
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+date: "October 1, 2014"
+---
+```{r setup, echo=FALSE, message=FALSE}
+require(knitr)
+#turn off mesages and warnings and make it so output isn't prefixed by anything,
+#default is to put "##" in front of all output for some reason
+#also set tidy to true so code is wrapped properly 
+#opts_chunk$set(message=FALSE, warning=FALSE, comment = "", tidy = T)
+opts_chunk$set(message=FALSE, warning=FALSE, comment = "")
+options(width = 60)
+#options(rpubs.upload.method = "internal")
+
+options(RCurlOptions = list(verbose = FALSE, capath = system.file("CurlSSL", "cacert.pem", package = "RCurl"), ssl.verifypeer = FALSE))
+
+```
+
+************
+
+#Part 1: Overview of last Classes
+
+## Reading in Data
+Download new data set, frequency of several diseases in Boston since the 1880's [BosEpi.tab.txt](https://www.dropbox.com/s/mdz49u7hl751ypx/BosEpi.tab.txt?dl=0)
+
+```{r, eval=FALSE}
+bosEpi = read.delim(file.choose())
+```
+
+```{r, echo=FALSE}
+bosEpi = read.delim("../dataSets/BosEpi.tab.txt")
+worEpi = read.delim("../dataSets/WorEpi.tab.txt")
+```
+
+View data table 
+```{r, eval=FALSE}
+View(bosEpi)
+```
+
+Important columns of the data set  
+**number** - Number of occurences  
+**loc** - Location of disease  
+**event** - Whether the number in **number** is number of cases or number of deaths from disease  
+**disease** - Disease Name  
+**Year** - Year of occurence   
+**Month** - Month of occurrence   
+**Day** - Day of occurrence   
+
+# Part 3: Customizing Plots  
+Now we will now plot the data from the previous parts and learn how to customize the plot by changing  
+
+-  x limits using `xlim=c()`  
+-  y limits using `ylim=c()`  
+-  x label using `xlab=`  
+-  y label using `ylab=`  
+-  title using `main=`  
+-  color using `col=`  
+-  line thickness using `lwd=`
+-  plot type using `ty=`
+-  type of frame using `bty=`
+-  Adding a legend using `legend()`
+
+For example lots plot some data about the number of deaths caused by diphtheria and scarlet fever in Boston  
+
+First lets extract the data and sum it again like before   
+```{r}
+dipScarDeaths = bosEpi[(bosEpi$disease == "DIPHTHERIA" | bosEpi$disease == "SCARLET FEVER") & bosEpi$event == "DEATHS",]
+
+dipScarDeathsSum = aggregate(number~disease*Year, dipScarDeaths, sum)
+head(dipScarDeathsSum)
+
+```
+
+Now lets plot the number of deaths for diphtheria by calling the `plot()` function and telling it to plot years on the x axis and number on the y axis   
+```{r}
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number )
+```
+
+The default plot by calling `plot()` is a scatter plot which might not be the best way to represent this data so we can use `type=` to change the type of plot, some options are "l" for line plot, "b" for both a line and scatter plot, and "h" for bars similar to a histogram, lets go with the last one 
+```{r}
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number,
+     type = "h")  
+```
+
+Now the default labels look all messed up so lets change them using `xlab=` and `ylab=` and we can add a title as well by using `main=` (which stands for main title)
+
+```{r}
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number,
+     type = "h", xlab = "Year", ylab = "Number of Deaths",
+     main = "Deaths by SCARLET FEVER")  
+```
+
+Now lets takes away the frame because it doesn't add much using `bty=` (which stands for box type) and make the lines thicker as well by using `lwd=` (which stands for line width)
+
+```{r}
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number,
+     type = "h", xlab = "Year", ylab = "Number of Deaths", 
+     main = "Deaths by SCARLET FEVER", bty = "none", lwd = 2)  
+```
+
+Lets add on the data points from the deaths of scarlet fever by using the `points()` function, which is just like the `plot()` function but puts it's points over the current plot rather than creating a new plot and since we are just adding the points we just need to tell it the type and the line width.  Also since we want to see the two data points next to each other, let's offset the year by 0.5 so the points end up next to each other.  Also let's add color by using the `col=` function 
+```{r}
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number,
+     type = "h", xlab = "Year", ylab = "Number of Deaths",
+     main = "Deaths by Diphtheria vs Deaths by Scarlet Fever",
+     bty = "none", lwd = 2, col = "red")  
+
+points(dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$Year + 0.5,
+       dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$number,
+       type = "h", lwd = 2, col = "darkblue") 
+```
+
+It looks like the data points for deaths by Diphtheria are being cut off because the default limites were set by the max number of Scarlet Fever deaths so lets change the xlimits and ylimits by `xlim=c()` and `ylim=c()` to tell the plot to span certain limits.  We can also take advantage of the R function `range()` 
+For example if we call `range()` on the numbers column we can get the max number and min numbers
+
+```{r}
+range(dipScarDeathsSum$number)
+```
+
+```{r}
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number,
+     type = "h", xlab = "Year", ylab = "Number of Deaths",
+     main = "Deaths by Diphtheria vs Deaths by Scarlet Fever",
+     bty = "none", lwd = 2, xlim = range(dipScarDeathsSum$Year),
+     ylim = range(dipScarDeathsSum$number), col= "red")  
+
+points(dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$Year + 0.5,
+       dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$number, 
+       type = "h", lwd = 2, col = "darkblue") 
+```
+
+Since there isn't much data after the 1920 it might be more interesting to look at only the data through that time point so we can see the data in more detail, lets change the `xlim=c()` to the change the year range 
+```{r}
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number
+     , type = "h", xlab = "Year", ylab = "Number of Deaths", 
+     main = "Deaths by Diphtheria vs Deaths by Scarlet Fever", 
+     bty = "none", lwd = 2, xlim =c(1880, 1930), 
+     ylim = range(dipScarDeathsSum$number), col= "red") 
+
+points(dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$Year + 0.5, 
+       dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$number,
+       type = "h", lwd = 2, col = "darkblue") 
+```
+
+We can also add a legend
+```{r}
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number,
+     type = "h", xlab = "Year", ylab = "Number of Deaths", 
+     main = "Deaths by Diphtheria vs Deaths by Scarlet Fever",
+     bty = "none", lwd = 2, xlim =c(1880, 1930), 
+     ylim = range(dipScarDeathsSum$number), col= "red")  
+
+points(dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$Year + 0.5,
+       dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$number,
+       type = "h", lwd = 2, col = "darkblue") 
+
+legend("topright", legend = c("SCARLET FEVER", "DIPHTHERIA"),
+       lwd = 2, col = c("red", "darkblue"))
+```
+
+##Part 3 Exercises {#part3_questions}
+
+1.  Try customizing some plots for the diseases found in the Worcester Epi Dataset  
+1.  For example trying to look how deaths have decreased over time for some diseases like measles (though maybe on the raise again), smallpox, etc
+1.  Try creating a plot comparing deaths between SCARLET FEVER and TYPHOID FEVER [ENTERIC FEVER]
+1.  Try ploting a couple of the big diseases in the 1920's 
+
+#Part 4 Installing and loading R packages
+Now we can use the colors provided by R but we can also use an R package called `RColorBrewer` or `colorspace` to provide us with even more colors but first we have to learn how to download the packages which can be done using `install.packages()` and `library()` or we can use RStudio to download them 
+
+Using `install.packages()` and `library()`
+```{r, eval=FALSE}
+#install package
+install.packages("RColorBrewer")
+#Once package is installed to actually use it you need to load it
+library("RColorBrewer")
+```  
+
+Or we can use RStudio to manually install the packages  
+In the bottom right corner of RStudio click the Packages tab and then the install icon  
+```{r fig.width=5, fig.height=3, echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("../images/installRPackage_1.png")
+ grid.raster(img)
+```  
+
+Type in RColorBrewer  
+
+```{r fig.width=5, fig.height=2, echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("../images/installPackage.png")
+ grid.raster(img)
+```  
+
+To Load click the check box next to RColorBrewer  
+
+```{r fig.width=5, fig.height=3, echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("../images/installRPackage_2.png")
+ grid.raster(img)
+```  
+
+You can see the output in the console window when doing this by hand and it actually is doing what we did before by calling `install.packages()` and `library()` 
+
+```{r fig.width=5, fig.height=3, echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("../images/installExampleConsoleWindow.png")
+ grid.raster(img)
+```  
+
+ 
+
+There are many more packages available for download and you can see a list of all them at http://cran.r-project.org/web/packages/available_packages_by_name.html
+
+We can do the same for colorspace  
+```{r, eval=FALSE}
+#install package
+
+install.packages("colorspace")
+
+#Once package is installed to actually use it you need to load it
+
+library("colorspace")
+```  
+
+First lets take a look at the colors provided by RColorBrewer and the easiest way to do that is to use the function `display.brewer.all()`
+```{r, echo=FALSE}
+library("RColorBrewer")
+library("colorspace")
+```  
+```{r, eval=T, fig.height= 10}
+display.brewer.all(n = 12,exact.n = F)
+```
+
+And then to use the colors you can use the function `brewer.pal()` and give it the number of colors you need/want and the name of the palette that can be seen next to the displayed colors, a favorite of mine is "Dark2" (I don't know why there isn't a Dark1)
+
+```{r, eval=T}
+brewer.pal(n = 3, name = "Dark2")
+```
+
+Now the colors might look a little funny because they don't have a human readable name but R understand how to interpret these colors, let's test it out on the plot from earlier 
+
+Store the colors in an object and then use it in the plotting functions 
+```{r}
+selectedColors = brewer.pal(n = 3, name = "Dark2")  
+
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number,
+     type = "h", xlab = "Year", ylab = "Number of Deaths",
+     main = "Deaths by Diphtheria vs Deaths by Scarlet Fever", 
+     bty = "none", lwd = 2, xlim =c(1880, 1930), 
+     ylim = range(dipScarDeathsSum$number), col= selectedColors[1])  
+
+points(dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$Year + 0.5,
+       dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$number,
+       type = "h", lwd = 2, col = selectedColors[2]) 
+
+legend("topright", legend = c("SCARLET FEVER", "DIPHTHERIA"), lwd = 2, 
+       col = selectedColors[1:2])
+```
+
+The palettes in RColorBrewer only have a limited number of colors in them by the package colorspace can be used to create palette than can have a lot more colors.  To use it call the choose_palette() , which will call up an interactive window to choose colors, and set it equal to an object to be used latter
+
+```{r}
+selPal = choose_palette()
+```
+
+```{r fig.width=5, fig.height=3, echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("../images/palWindow.png")
+ grid.raster(img)
+```  
+
+You can now tell selPal to give you a certain number of colors and then use them like the RColorBrewer example above
+```{r }
+selectedColors = selPal(2)  
+
+plot(dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$Year,
+     dipScarDeathsSum[dipScarDeathsSum$disease == "SCARLET FEVER",]$number,
+     type = "h", xlab = "Year", ylab = "Number of Deaths", 
+     main = "Deaths by Diphtheria vs Deaths by Scarlet Fever",
+     bty = "none", lwd = 2, xlim =c(1880, 1930), 
+     ylim = range(dipScarDeathsSum$number), col= selectedColors[1])  
+
+points(dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$Year + 0.5,
+       dipScarDeathsSum[dipScarDeathsSum$disease == "DIPHTHERIA",]$number,
+       type = "h", lwd = 2, col = selectedColors[2]) 
+
+legend("topright", legend = c("SCARLET FEVER", "DIPHTHERIA"),
+       lwd = 2, col = selectedColors[1:2])
+```
+
+
+##Part 4 Exercises {#part4_questions}
+1.  Test out some of the color palettes from the RColorBrewer package to change the colors to your previous plots.  
+1.  Try creating some of your own color palettes from the colorspace package to fine tune the colors you want.  
+
+
+
+
