@@ -189,5 +189,10 @@ qplot(month, number, data=x, geom="smooth", facets=~event)
 ##Part 4. Exercises.
 1.  Pick a Nothern and a Southern state. Is there a noticable difference in the pattern of influenza cases and deaths?
 2.  Pick a couple of diseases and plot graphs for the cities chosen.
-3.  Facet the graphs by event and disease.
+3.  Facet the graphs by event and disease, i.e. look at whooping cough vs. measles.
+
+```{r}
+library(scales)
+qplot(disease, number, data=aggregate(number ~ disease, epi, sum), geom="bar", stat="identity", main="Total events per disease") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + scale_y_continuous(labels = comma)
+```
 
