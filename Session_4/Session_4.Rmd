@@ -173,12 +173,8 @@ head(epi)
 ```
 
 ```{r}
-epi$month <- factor(epi$month)
-```
-
-```{r}
 x <- aggregate(number ~ disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
-qplot(month, number, data=x, geom="path", facets=~event, group = 1)
+qplot(month, number, data=x, geom="path", facets=~event)
 ```
 
 ```{r}
@@ -188,7 +184,7 @@ qplot(month, number, data=x, geom="path", group=state, color=state, facets=~even
 
 ```{r}
 x <- aggregate(number ~ state * disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
-qplot(month, number, data=x, geom="smooth", facets=~event, group = 1)
+qplot(month, number, data=x, geom="smooth", facets=~event)
 ```
 
 ##Part 4. Exercises.
