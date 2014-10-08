@@ -42,14 +42,14 @@ If you look in the console window you'll see that two commands were executed. Th
 Session_1 <- read.delim("/Desktop/Session_1.txt")
 View(Session_1)
 ```  
-2. Load the file again using the `read.delim()` function and a new function, `file.choose()`, and store it in a `data.frame` named s1.
+2. Load the file again using the `read.delim()` function and a new function, `file.choose()`, and store it in a `data.frame` named s1.  
 ```{r eval=FALSE}
 s1 <- read.delim(file.choose())
 ```  
 You should now have two data.frames listed in your environment: s1 and Session_1  
 ![](../images/dataSetsLoadedExamp.png)
 
-Optional: Check to see if the two data.frames are identical:
+Optional: Check to see if the two data.frames are identical:  
 ```{r echo=FALSE}
 s1=read.delim("../dataSets/Session_1.txt")
 Session_1=read.delim("../dataSets/Session_1.txt")

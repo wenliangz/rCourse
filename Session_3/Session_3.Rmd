@@ -12,13 +12,8 @@ require(knitr)
 #turn off mesages and warnings and make it so output isn't prefixed by anything,
 #default is to put "##" in front of all output for some reason
 #also set tidy to true so code is wrapped properly 
-#opts_chunk$set(message=FALSE, warning=FALSE, comment = "", tidy = T)
 opts_chunk$set(message=FALSE, warning=FALSE, comment = "")
 options(width = 60)
-#options(rpubs.upload.method = "internal")
-
-options(RCurlOptions = list(verbose = FALSE, capath = system.file("CurlSSL", "cacert.pem", package = "RCurl"), ssl.verifypeer = FALSE))
-
 ```
 
 ************
