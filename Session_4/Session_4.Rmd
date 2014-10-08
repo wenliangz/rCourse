@@ -177,18 +177,24 @@ head(epi)
 ```{r echo=FALSE}
 options(width = 60)
 ```
+
+To find the number of influenza events, broken down by month and type of event, across the whole country, we can use `aggregate()`.  
+
 ```{r}
 x <- aggregate(number ~ disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
 qplot(month, number, data=x, geom="path", facets=~event)
 ```
+
+If we'd like to also break this down to the state level, we can add "state" to the formula.  
 
 ```{r}
 x <- aggregate(number ~ state * disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
 qplot(month, number, data=x, geom="path", group=state, color=state, facets=~event) + guides(col = guide_legend(ncol=3))
 ```
 
+To see the average number of events, across all states, including the standard error, we can do:  
+
 ```{r}
-x <- aggregate(number ~ state * disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
 qplot(month, number, data=x, geom="smooth", facets=~event)
 ```
 
