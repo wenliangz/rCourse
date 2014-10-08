@@ -36,32 +36,30 @@ install.packages("ggplot2")
 library("ggplot2")
 ```  
 
-Or we can use RStudio to manually install the packages  
-In the bottom right corner of RStudio click the Packages tab and then the install icon  
-```{r fig.width=5, fig.height=3, echo=FALSE}
+Or we can use RStudio to manually install the packages. In the bottom right corner of RStudio click the Packages tab and then the install icon.   
+```{r fig.width=8, echo=FALSE}
 grid.raster(readPNG("../images/installRPackage_1.png"))
 ```  
 
-Type in ggplot2  
+Type in ggplot2
 
-```{r fig.width=5, fig.height=2, echo=FALSE}
+```{r fig.width=4, echo=FALSE}
 grid.raster(readPNG("../images/install_ggplot.png"))
 ```  
 
 To Load click the check box next to ggplot2  
 
-```{r fig.width=5, fig.height=3, echo=FALSE}
+```{r fig.width=8, echo=FALSE}
 grid.raster(readPNG("../images/install_ggplot2.png"))
 ```  
 
 You can see the output in the console window when doing this by hand and it actually is doing what we did before by calling `install.packages()` and `library()` 
 
-```{r fig.width=5, fig.height=3, echo=FALSE}
+```{r fig.width=8, echo=FALSE}
 grid.raster(readPNG("../images/install_ggplot3.png"))
 ```  
 
-
-#Part 2: Reading in Data
+# Part 2: Plotting using ggplot2
 
 Download new data set, frequency of several diseases in Boston since the 1880's [BosEpi.tab.txt](https://www.dropbox.com/s/mdz49u7hl751ypx/BosEpi.tab.txt?dl=0)
 
@@ -80,26 +78,18 @@ View data table
 View(bosEpi)
 ```
 
-Important columns of the data set  
-**number** - Number of occurences  
-**loc** - Location of disease  
-**event** - Whether the number in **number** is number of cases or number of deaths from disease  
-**disease** - Disease Name  
-**Year** - Year of occurence   
-**Month** - Month of occurrence   
-**Day** - Day of occurrence   
-
-# Part 3: Plotting using ggplot2
-
 qplot() is a superior alternative to plot(). It is part of the "ggplot2" package and provides easy ways to produce publication-quality figures.  
 For example:
 
-```{r fig.width=10}
+```{r}
 library(ggplot2)
+```
+
+```{r fig.width=10}
 qplot(Year, number, geom="histogram", stat="identity", fill=disease, position="dodge", data=bosEpi[bosEpi$event == "DEATHS",], xlim=c(1885, 1940))
 ```
 
-# Part 4: step-by-step qplot()
+# Part 3: step-by-step qplot()
 
 We will now start with a few small examples of qplot().
 
@@ -121,7 +111,6 @@ dipScarDeaths <- bosEpi[(bosEpi$disease == "DIPHTHERIA" | bosEpi$disease == "SCA
 
 dipScarDeathsSum <- aggregate(number~disease*Year, dipScarDeaths, sum)
 head(dipScarDeathsSum)
-
 ```
 
 Now, this is how we can use qplot() to plot the number of deaths per year, using the  aggregated data.
@@ -150,6 +139,13 @@ To turn this into a bar plot we can do the following.
 qplot(Year, number, data=dipScarDeathsSum, color=disease, xlim=c(1880, 1930), geom="bar", stat="identity", position="dodge", fill=disease, main = "Deaths by Diphtheria vs Deaths by Scarlet Fever", xlab = "Year", ylab = "Number of Deaths")
 ```
 
+*  **data** specifies the data frame to use
+*  **Year** and **number** are columns from the data set
+*  **color** sets the color of the border of the bars, in this case it is based on the "disease" column
+*  **xlim** limits the scale of the x-axis, like in plot()
+*  **xlab**, **ylab** and **main** are titles, like in plot()
+
+
 Last week we saw that we can use plot() to generate a similar figure. qplot() make this much simpler.
 
 ```{r}
@@ -168,5 +164,11 @@ legend("topright", legend = c("SCARLET FEVER", "DIPHTHERIA"),
        lwd = 2, col = c("red", "darkblue"))
 ```
 
+##Part 3 Exercises {#part3_questions}
+
+1.  Try customizing some plots for the diseases found in the Worcester Epi Dataset  
+1.  For example trying to look how deaths have decreased over time for some diseases like measles (though maybe on the raise again), smallpox, etc
+1.  Try creating a plot comparing deaths between SCARLET FEVER and TYPHOID FEVER [ENTERIC FEVER]
+1.  Try ploting a couple of the big diseases in the 1920's 
 
 
