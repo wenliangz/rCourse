@@ -77,8 +77,8 @@ View data table
 View(bosEpi)
 ```
 
-`qplot()` is a superior alternative to `plot()`. It is part of the "ggplot2" package and provides easy ways to produce publication-quality figures.   
-For example:  
+`qplot()` is a superior alternative to `plot()`. It is part of the "ggplot2" package and provides easy ways to produce publication-quality figures. For example:  
+
 ```{r}
 library(ggplot2) # be sure to load the "ggplot2" library!
 ```
@@ -169,11 +169,16 @@ You can download the file and then read it into R using `read.delim()`. Also, yo
 
 ```{r}
 epi <- read.delim("http://bib.umassmed.edu/~hathawan/rCourse/dataSets/someEpi.tab.txt")
+head(epi)
+```
+
+```{r}
+epi$month <- factor(epi$month)
 ```
 
 ```{r}
 x <- aggregate(number ~ disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
-qplot(month, number, data=x, geom="path", facets=~event)
+qplot(month, number, data=x, geom="path", facets=~event, group = 1)
 ```
 
 ```{r}
@@ -183,7 +188,7 @@ qplot(month, number, data=x, geom="path", group=state, color=state, facets=~even
 
 ```{r}
 x <- aggregate(number ~ state * disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
-qplot(month, number, data=x, geom="smooth", facets=~event)
+qplot(month, number, data=x, geom="smooth", facets=~event, group = 1)
 ```
 
 ##Part 4. Exercises.
@@ -191,7 +196,7 @@ qplot(month, number, data=x, geom="smooth", facets=~event)
 2.  Pick a couple of diseases and plot graphs for the cities chosen.
 3.  Facet the graphs by event and disease, i.e. look at whooping cough vs. measles.
 
-```{r}
+```{r fig.height=8}
 library(scales)
 qplot(disease, number, data=aggregate(number ~ disease, epi, sum), geom="bar", stat="identity", main="Total events per disease") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + scale_y_continuous(labels = comma)
 ```
