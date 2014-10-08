@@ -1,9 +1,9 @@
 ---
 title: 'Data Visualization in R: Session 4'
 output:
-  html_document:
-    toc: yes
   pdf_document:
+    toc: yes
+  html_document:
     toc: yes
 date: "October 8, 2014"
 ---
@@ -131,11 +131,11 @@ qplot(Year, number, data=dipScarDeathsSum, color=disease, xlim=c(1880, 1930), ge
 ```
 
 The important parts of this command are:  
-*  **data** specifies the data frame to use
-*  **Year** and **number** are columns from the data set
-*  **color** sets the color of the border of the bars, in this case it is based on the "disease" column
-*  **xlim** limits the scale of the x-axis, like in plot()
-*  **xlab**, **ylab** and **main** are titles, like in plot()
+*  **data** specifies the data frame to use  
+*  **Year** and **number** are columns from the data set  
+*  **color** sets the color of the border of the bars, in this case it is based on the "disease" column  
+*  **xlim** limits the scale of the x-axis, like in plot()  
+*  **xlab**, **ylab** and **main** are titles, like in plot()  
 
 To illustrate the difference between `plot()` and `qplot()`, below are the commands that were used last week to generate a similar figure. `qplot()` make this much simpler.  
 ```{r}
@@ -167,11 +167,16 @@ Here's the link to the data set you will be using for the next exercises. This d
 
 You can download the file and then read it into R using `read.delim()`. Also, you can read it directly, like this:
 
+```{r echo=FALSE}
+options(width = 120)
+```
 ```{r}
 epi <- read.delim("http://bib.umassmed.edu/~hathawan/rCourse/dataSets/someEpi.tab.txt")
 head(epi)
 ```
-
+```{r echo=FALSE}
+options(width = 60)
+```
 ```{r}
 x <- aggregate(number ~ disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
 qplot(month, number, data=x, geom="path", facets=~event)
