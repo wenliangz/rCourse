@@ -126,16 +126,17 @@ qplot(Year, number, data=dipScarDeathsSum, color=disease, xlim=c(1880, 1930))
 What we see is that `qplot()` automatically chose reasonable colors and also produced a legend.  
 
 To turn this plot into a bar plot, we can do the following.  
-```{r}
+```{r, fig.width=10}
 qplot(Year, number, data=dipScarDeathsSum, color=disease, xlim=c(1880, 1930), geom="bar", stat="identity", position="dodge", fill=disease, main = "Deaths by Diphtheria vs Deaths by Scarlet Fever", xlab = "Year", ylab = "Number of Deaths")
 ```
 
 The important parts of this command are:  
+
 *  **data** specifies the data frame to use  
 *  **Year** and **number** are columns from the data set  
 *  **color** sets the color of the border of the bars, in this case it is based on the "disease" column  
-*  **xlim** limits the scale of the x-axis, like in plot()  
-*  **xlab**, **ylab** and **main** are titles, like in plot()  
+*  **xlim** limits the scale of the x-axis, like in `plot()`  
+*  **xlab**, **ylab** and **main** are titles, like in `plot()`  
 
 To illustrate the difference between `plot()` and `qplot()`, below are the commands that were used last week to generate a similar figure. `qplot()` make this much simpler.  
 ```{r}
@@ -155,7 +156,7 @@ legend("topright", legend = c("SCARLET FEVER", "DIPHTHERIA"),
 ```
 
 ##Part 3 Exercises {#part3_questions}
-1.  Try customizing some plots for the diseases found in the Worcester Epi Dataset  
+1.  Try customizing some plots for the diseases found in the [Worcester Epi Dataset](http://bib.umassmed.edu/~hathawan/rCourse/dataSets/WorEpi.tab.txt)  
 2.  For example trying to look how deaths have decreased over time for some diseases like measles (though maybe on the raise again), smallpox, etc.
 3.  Try creating a plot comparing deaths between "SCARLET FEVER"" and "TYPHOID FEVER [ENTERIC FEVER]"
 4.  Try ploting a couple of the big diseases in the 1920's 
@@ -167,34 +168,23 @@ Here's the link to the data set you will be using for the next exercises. This d
 
 You can download the file and then read it into R using `read.delim()`. Also, you can read it directly, like this:
 
-```{r echo=FALSE}
-options(width = 120)
-```
 ```{r}
 epi <- read.delim("http://bib.umassmed.edu/~hathawan/rCourse/dataSets/someEpi.tab.txt")
 head(epi)
 ```
-```{r echo=FALSE}
-options(width = 60)
-```
-
-To find the number of influenza events, broken down by month and type of event, across the whole country, we can use `aggregate()`.  
 
 ```{r}
 x <- aggregate(number ~ disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
 qplot(month, number, data=x, geom="path", facets=~event)
 ```
 
-If we'd like to also break this down to the state level, we can add "state" to the formula.  
-
 ```{r}
 x <- aggregate(number ~ state * disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
 qplot(month, number, data=x, geom="path", group=state, color=state, facets=~event) + guides(col = guide_legend(ncol=3))
 ```
 
-To see the average number of events, across all states, including the standard error, we can do:  
-
 ```{r}
+x <- aggregate(number ~ state * disease * month * event, epi[epi$disease == "INFLUENZA", ], sum)
 qplot(month, number, data=x, geom="smooth", facets=~event)
 ```
 
