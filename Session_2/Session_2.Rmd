@@ -30,8 +30,11 @@ This dataset contains experimental data on the pharmacokinetics of theophylline,
 #Part 1: Reading and previewing data from a text file  
  
 Just like last time, let's read in our dataset, "Session_1.txt". Last session, we learned two ways to import data:  
- 
-1. You can specify a path for your file:  
+This  
+That  
+
+1.  You can specify a path for your file:   
+
 ```{r eval = FALSE}
 Session_1 <- read.delim("~/Desktop/Session_1.txt")
 ```
@@ -105,7 +108,16 @@ And we should get the following output:
 ```{r echo = FALSE}
 Session_1[1,1] == Session_1[2,1]  
 ```   
-Turns out that the data in rows 1 and 2 both belong to Subject 1! Good thing we checked :-)  
+
+
+```{r engine='python'}
+
+```
+
+
+Turns out that the data in rows 1 and 2 both belong to Subject 1! Good thing we checked :-)  legend("topright", legend = c("SCARLET FEVER", "DIPHTHERIA"),
+
+
 IMPORTANT: make sure you use both the equal signs (`==`) when checking if two values are equal. If you use a single equal sign, you will re-assign the value on the right side of the ='s to the left side's position in the dataset!  
 Now let's try checking if two values are not equal. Let's start by checking if the value in row 1, column 1 is equal to row 12, column 1. To do this, we would enter the following:  
 ```{r eval = FALSE}

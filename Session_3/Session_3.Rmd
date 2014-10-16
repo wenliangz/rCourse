@@ -7,6 +7,7 @@ output:
     toc: yes
 date: "October 1, 2014"
 ---
+
 ```{r setup, echo=FALSE, message=FALSE}
 require(knitr)
 #turn off mesages and warnings and make it so output isn't prefixed by anything,
