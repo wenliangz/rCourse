@@ -17,17 +17,30 @@ library(reshape2)
 library(gridExtra)
 
 
+#' # Load datasets 
+boston.epi.df <- read.csv(file = "/home/wespisea/software/rCourse/dataSets/BosEpi.tab.txt",
+                          stringsAsFactors=FALSE,
+                          sep="\t")
+
+
 #' # Scatter Plot
 
 ggplot(iris,aes(x=Sepal.Width,y=Sepal.Length)) + geom_point() 
 
-
+#'# 1) use the women dataset to plot average heights and weights for american women
+ggplot(birthwt, aes(x=age,y=lwt, color = low)) 
 
 #'# Aesthetic Mappings: 
 #' we can map: color, shape to data.frames or arbritrary values
 
 ggplot(iris,aes(x=Sepal.Width,y=Sepal.Length,shape=Species)) + geom_point()
 ggplot(iris,aes(x=Sepal.Width,y=Sepal.Length,color=Species)) + geom_point()
+
+#'# 2) Load birth weight from the MASS library, 
+#' plot age vs. weight at last menstration and color by indicator of low birth weight
+#' is low birthweight associated with either age or last weight?
+#' if not, what would you expect an association to look like?
+ggplot(birthwt, aes(x=age,y=lwt, color = low)) + geom_point()
 
 #' set aesthetics to fixed values:
 ggplot(iris,aes(x=Sepal.Width,y=Sepal.Length)) + geom_point(color="red",size=4)
@@ -43,12 +56,25 @@ ggplot(iris,aes(x=Sepal.Width,y=Sepal.Length,color=Species,shape=Species)) +
 #' note, the aesthetic mappings work the same
 ggplot(economics,aes(x=date,y=uempmed))+geom_line()
 
-#' add a vertical line:
-ggplot(economics,aes(x=date,y=uempmed))+ geom_line() + 
-  geom_vline(x=as.numeric(as.Date("1986-09-12")))
+#' 3) plot the number of Typhoid Fever deaths per year 
+typh.boston.df <- boston.epi.df[which(boston.epi.df$disease == "TYPHOID FEVER [ENTERIC FEVER]" &
+                                        boston.epi.df$event == "DEATHS"),]
+agg.df <- aggregate(data=typh.boston.df, number ~ Year,sum)
+ggplot(agg,aes(x=Year,y=number)) + geom_line()
 
-ggplot(economics,aes(x=date,y=uempmed * pop))+ geom_line() + 
-  geom_vline(x=as.numeric(as.Date("1986-09-12")))
+#' add labels and a title:
+ggplot(economics,aes(x=date,y=uempmed))+ geom_line() +
+  xlab("Time") + 
+  ylab("Unemployment Rate") + 
+  ggtitle("Unemployment Rate vs Time\n1967-2007")
+
+
+#' 4) Now go back to the previous plot and add labels
+
+ggplot(agg,aes(x=Year,y=number)) + geom_line() +
+  xlab("Time (in years)") +
+  ylab("Number of Typhoid Fever Deaths")+
+  ggtitle("Typhoid Fever Deaths Per Year\n1888-1932")
 
 #'# Bar Plot
 ggplot(mtcars,aes(x=cyl))+geom_bar(binwidth=1) 
@@ -65,6 +91,11 @@ ggplot(mtcars,aes(x=factor(cyl),fill=factor(gear)))+geom_bar()
 #' another, better example:
 ggplot(diamonds, aes(clarity, fill=cut)) + geom_bar()
 
+#' 5) What is the distribution of cases of typhoid per week?
+
+ggplot(typh.boston.df, aes(x=number)) + geom_bar(binwidth=1)
+
+
 #'# Density Plot
 ggplot(movies, aes(length))+geom_density()
 
@@ -75,36 +106,28 @@ ggplot(movies, aes(x=length,fill=factor(Short)))+geom_density() + xlim(0,200)
 #' Set transperancy of distro
 ggplot(iris, aes(x=Sepal.Width,fill=Species))+geom_density(alpha=I(0.4))
 
-#'# FreqPoly
-#' like density, except not normalized to area=1
-ggplot(iris, aes(x=Sepal.Width,fill=Species))+geom_freqpoly()
+#' 6) High glycosaminoglycans (GAGs) urine levels can progressively damage tissue, 
+#' and high levels are indictitive of inherited disease. Using the GAGurine dataset
+#' from MASS, plot the distribution of levels for children of all ages.
+ggplot(GAGurine, aes(x=GAG)) + geom_density()
 
-#' let's adjust the bin and line thickness
-ggplot(iris, aes(x=Sepal.Width,color=Species))+geom_freqpoly(bin=0.2,size=2)
+#' 6b) You want to compare the distribution of children under 2, and all other children
+#' make a density plot to show this. 
+ggplot(GAGurine, aes(x=GAG,color=Age < 2)) + geom_density()
+
 
 #'# boxplot 
 ggplot(movies[movies$year > 1990,],aes(x=factor(year),y=rating))+geom_boxplot()
 ggplot(movies[movies$year > 1990,],aes(x=factor(year),y=rating,fill=factor(Short)))+geom_boxplot()
+ggplot(movies[movies$year > 1990,],aes(x=cut(year,breaks=seq(from=1991,to=2005,by=5)),y=rating,fill=factor(Short)))+geom_boxplot()
 
 
 
-#'# Path 
-#' instead of a line, we can follow each subsequent point to the next...
-
-#' create a random walk:
-steps = 500
-#' set our reduce function, so we don't have to use loops...
-reduceFn = function(x,y)c(x[1]+runif(1)*2 - 1,x)
-#' create a function that returns a data.frame with a random walk of "steps" steps
-randomWalk  = function(steps)data.frame(x= Reduce(f=reduceFn,1:steps,init=c(1)),
-                                        y=  Reduce(f=reduceFn,1:steps,init=c(1)),
-                                        index=1:(steps + 1))
-
-#' if you use a line plot, notice that the x values are ordered...
-ggplot(randomWalk(1000),aes(x,y,color=index))+geom_line() 
+#' 7) Use a box plot to show the distribution of GAG assay levels for each Age.
+#' HINT: 
+ggplot(GAGurine, aes(y=GAG,x=cut(GAGurine$Age,breaks = 1:17))) + geom_boxplot()
 
 
-ggplot(randomWalk(1000),aes(x,y,color=index))+geom_path() + geom_point()
 
 
 #' #Data Labels and Titles
@@ -151,15 +174,18 @@ iris.plot +
         panel.grid.major = element_line(colour = "lightgrey", linetype = "dotted"),
         axis.line = element_line(),
         axis.text = element_text(colour = "black"))
+#' See http://docs.ggplot2.org/current/theme.html for more options
 
+#' 8) Make the ugliest plot you can. Bonus points for discordant color schemes. 
 
+#'# Bonus material
 
 #'#  Legend Positioning (theme subtopic?)
 
 #' what options do we have for the position of the legend?
 #' examples borrowed from: http://www.r-bloggers.com/ggplot2-cheatsheet-for-scatterplots/
 
-g1<-ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point(aes(color=factor(vs)))
+g1 <- ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point(aes(color=factor(vs)))
 #'move legend to the inside
 g2 <- g1 + theme(legend.position=c(1,1),legend.justification=c(1,1))
 #' move legend to the bottom
@@ -397,6 +423,23 @@ ggplot(getArrayZoom(re.vec=c(-0.11,-.09),im.vec=c(0.95,0.965)), aes(Var1,Var2,fi
   theme_minimal()
 
 
+#'# Path 
+#' instead of a line, we can follow each subsequent point to the next...
+
+#' create a random walk:
+steps = 500
+#' set our reduce function, so we don't have to use loops...
+reduceFn = function(x,y)c(x[1]+runif(1)*2 - 1,x)
+#' create a function that returns a data.frame with a random walk of "steps" steps
+randomWalk  = function(steps)data.frame(x= Reduce(f=reduceFn,1:steps,init=c(1)),
+                                        y=  Reduce(f=reduceFn,1:steps,init=c(1)),
+                                        index=1:(steps + 1))
+
+#' if you use a line plot, notice that the x values are ordered...
+ggplot(randomWalk(1000),aes(x,y,color=index))+geom_line() 
+
+
+ggplot(randomWalk(1000),aes(x,y,color=index))+geom_path() + geom_point()
 
 
 

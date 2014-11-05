@@ -14,3 +14,5 @@ hint6b <- "Instead of Age, use Age < 2, R will treat this as a binary variable"
 answer6b <- 'ggplot(GAGurine, aes(x=GAG,color=Age < 2)) + geom_density()'
 hint7 <- 'instead of GAGurine$Age, use cut(GAGurine$Age,breaks = 1:17)'
 answer7 <- 'ggplot(GAGurine, aes(y=GAG,x=cut(GAGurine$Age,breaks = 1:17))) + geom_boxplot()'
+answer8 <- 'http://flowingdata.com/category/visualization/ugly-visualization/'
+print("Answers have successfully loaded")
