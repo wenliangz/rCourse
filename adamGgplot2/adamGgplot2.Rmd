@@ -43,6 +43,12 @@ boston.epi.df <- read.csv(file = "http://bib.umassmed.edu/~hathawan/rCourse/data
 
 
 ##Scatter Plots
+To create a scatter plot using qplot you would use:
+```{r,eval=FALSE}
+qplot(data=iris,x=Sepal.Width,y=Sepal.Length,geom="point")
+```
+For ggplot2, the command is:  
+
 ```{r,fig.width=4,fig.height=3,cache.lazy=TRUE}
 ggplot(iris,aes(x=Sepal.Width,y=Sepal.Length)) + geom_point() 
 ```  
